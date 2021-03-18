@@ -1,0 +1,65 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "75%"
+)
+```
+
+# Re-analysis of consonance and harmonicity in Friedman et al., (2021) data
+
+<!-- badges: start -->
+<!-- badges: end -->
+
+This repository contains a re-analysis of Friedman et al., (2021) data about consonance in Bohlen-Pierce dyads/triads. Our starting point their data (under data folder) and the analysis by Bowling (2021).
+
+## Loading the data
+
+```{r}
+library(tidyr)
+library(ppcor)
+library(ggplot2)
+
+source('read_data.R')
+head(as_tibble(df))
+# BHM   Bowling Harmonicity model
+# HPHM  Harrison Pearce Harmonicity model
+# SIM   Huthinson and Knopoff Roughness model (Spectral Interference Model)
+```
+### Replicate Bowling correlations
+```{r}
+source('correlational_analysis.R')
+```
+
+### Replicate Bowling's plot (B and D)
+
+```{r}
+source('figure1.R')
+print(fig1)
+```
+
+### Impact of controversial trimming
+
+```{r}
+source('correlational_analysis_after_trimming_pearson.R')
+```
+
+### Analysis of varying thresholds
+```{r}
+source('varying_thresholds.R')
+print(combo)
+```
+
+## References
+
+Bowling, D. L. (2021). Harmonicity and roughness in the biology of tonal aesthetics. _Music Perception: An Interdisciplinary Journal, 38 (3)_, 331–334.
+
+Friedman, R. S., Kowalewski, D. A., Vuvan, D. T., & Neill, W. T. (2021). Consonance preferences within an unconventional tuning system. _Music Perception: An Interdisciplinary Journal, 38(3)_, 313–330.
+
