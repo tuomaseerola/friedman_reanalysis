@@ -13,16 +13,20 @@ knitr::opts_chunk$set(
 )
 ```
 
-# Re-analysis of consonance and harmonicity in Friedman et al., (2021) data
+# Re-analysis of consonance and harmonicity in Friedman et al. data
 
 <!-- badges: start -->
 <!-- badges: end -->
 
-This repository contains a re-analysis of Friedman et al., (2021) data about consonance in Bohlen-Pierce dyads/triads. Our starting point their data (under data folder) and the analysis by Bowling (2021).
+This repository contains a re-analysis of Friedman et al. (2021) data about consonance in Bohlen-Pierce dyads/triads. Our starting point is their data and the analysis by Bowling (2021). The sources of the data are:
+
+* `table1.txt` and `table2.txt` in the `/data` contain stimulus details and dyads and triads and consonance ratins and come from Friedman et al. article: https://online.ucpress.edu/mp/article/38/3/313/116134/Consonance-Preferences-Within-an-Unconventional
+
+* `model1.txt` and `model2.txt` `/data` contain harmonicity and roughness models and are extracted from supplementary data of the Friedman et al. article:  https://ucp.silverchair-cdn.com/ucp/content_public/journal/mp/38/3/10.1525_mp.2021.38.3.313/2/5_friedman_etal_supplementary_data.pdf
 
 ## Loading the data
 
-```{r}
+```{r,message=FALSE,warning=FALSE}
 library(tidyr)
 library(ppcor)
 library(ggplot2)
@@ -33,29 +37,49 @@ head(as_tibble(df))
 # HPHM  Harrison Pearce Harmonicity model
 # SIM   Huthinson and Knopoff Roughness model (Spectral Interference Model)
 ```
-### Replicate Bowling correlations
-```{r}
-source('correlational_analysis.R')
-```
 
-### Replicate Bowling's plot (B and D)
+### Replicate Bowling's Figure 1
 
-```{r}
+Plot panels B and D in Figure 1 of Bowling's article (p. 332). We display three quartiles ($Q_1$, $Q_2$, $Q_3$) on top of the distributions and show more accurate density distribution below (panel B).
+
+```{r, fig.height=7,fig.height=7,fig.cap='Bowling\'s visualisation of the data with the actual quartiles. Dyads are blue and triads are red. Squares are BP intervals 2/11 and triangles refer to BP interval 13.'}
 source('figure1.R')
 print(fig1)
 ```
 
+### Replicate Bowling correlations
+
+Spearman rank correlations with skewed harmonicity variable.
+
+```{r, code = readLines("correlational_analysis_with_rank.R")}
+```
+
+### Is harmonicity skewed and can it be fixed?
+
+A more efficient way to analyse the data is to address the skewness of the harmonicity variable before applying linear models.
+
+```{r,echo=TRUE}
+library(nortest) # Library for normality tests
+ad.test(df$BHM) # Anderson test
+ad.test(log(df$BHM))
+```
+In short, harmonicity (BHM) is highly non-normally distributed but after log transformation it no longer violates normality which these two Anderson tests of normality demonstrate. For the visualisation of the original and transformed distributions of harmonicity, see the figure below that shows the histograms (panels B and D). 
+
 ### Impact of controversial trimming
 
-```{r}
+Calculate all correlations, partial correlations and semi-partial correlations between consonance, harmonicity and roughness with full data, chromatic exclusion and low harmonicity exclusion using pearson correlations. In this analysis, harmonicity has been log transformed to eliminate the skewness. For the details of the calculation, see script (`correlational_analysis_after_trimming_pearson.R`).
+
+```{r,echo=FALSE,results='asis'}
 source('correlational_analysis_after_trimming_pearson.R')
 ```
 
 ### Analysis of varying thresholds
-```{r}
-source('varying_thresholds.R')
-print(combo)
+
+What happens with different data exclusions (using percentiles from 10% to 90%). Compare linear, quadratic and dummy coded models with null models with the same data subsets.
+
+```{r, code = readLines("varying_thresholds.R"),fig.width=7,fig.height=9,fig.cap="Figure 1 in our response that captures all issues."}
 ```
+
 
 ## References
 
